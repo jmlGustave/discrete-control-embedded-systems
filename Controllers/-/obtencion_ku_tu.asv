@@ -1,0 +1,20 @@
+load 36290_datos_T-A.mat
+
+A = [1, 1.3913, 0.5655, 0.0714] %a empieza por 1 para que el modelo no se rompa
+B = [0, 0, 1.2331, 1.7692, 0.6315]
+
+Ku = 1.5;
+Planta = tf(B, A, T);
+
+% Controlador Proporcional
+Controlador = tf([Ku], [1], T);
+
+% Cerramos el bucle (feedback asume retroalimentación negativa por defecto)
+LazoCerrado = feedback(Controlador * Planta, 1);
+
+% --- 4. SIMULAMOS Y DIBUJAMOS ---
+t_sim = 0:T:15; % Simulamos 15 segundos (ajústalo si necesitas ver más)
+escalon = 2 * ones(size(t_sim)); % Usamos el mismo escalón de amplitud 2 de tu práctica
+
+% Simulamos la respuesta del sistema cerrado ante el escalón
+y_cerrado = lsim(LazoCerrado, escalon, t_sim);
